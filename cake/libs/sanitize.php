@@ -69,7 +69,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function escape($string, $connection = 'default') {
+	static function escape($string, $connection = 'default') {
 		$db =& ConnectionManager::getDataSource($connection);
 		if (is_numeric($string) || $string === null || is_bool($string)) {
 			return $string;
@@ -97,7 +97,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function html($string, $options = array()) {
+	static function html($string, $options = array()) {
 		static $defaultCharset = false;
 		if ($defaultCharset === false) {
 			$defaultCharset = Configure::read('App.encoding');
@@ -219,7 +219,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function clean($data, $options = array()) {
+	static function clean($data, $options = array()) {
 		if (empty($data)) {
 			return $data;
 		}

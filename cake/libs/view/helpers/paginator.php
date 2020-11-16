@@ -468,7 +468,11 @@ class PaginatorHelper extends AppHelper {
 			$model = null;
 		}
 		$paging = $this->params($model);
-		return $page <= $paging['pageCount'];
+		if (isset($paging['pageCount'])) {
+			return $page <= $paging['pageCount'];
+		}
+
+		return false;
 	}
 
 /**
@@ -791,7 +795,10 @@ class PaginatorHelper extends AppHelper {
 		unset($options['tag'], $options['before'], $options['model'], $options['separator']);
 
 		$out = '';
-		$lower = $params['pageCount'] - $last + 1;
+		$lower = $params['pageCount'] - 1;
+		if (is_int($last)) {
+			$lower = $params['pageCount'] - $last + 1;
+		}
 
 		if (is_int($last) && $params['page'] < $lower) {
 			if ($before === null) {

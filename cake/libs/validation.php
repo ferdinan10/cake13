@@ -27,7 +27,7 @@ if (!class_exists('Multibyte')) {
  * @subpackage    cake.cake.libs
  * @since         CakePHP v 1.2.0.3830
  */
-class Validation extends Object {
+class Validation extends CakeObject {
 
 /**
  * Set the value of methods $check param.
@@ -53,7 +53,7 @@ class Validation extends Object {
  * @access private
  */
 	var $__pattern = array(
-		'hostname' => '(?:[a-z0-9][-a-z0-9]*\.)*(?:[a-z0-9][-a-z0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,4}|museum|travel)'
+		'hostname' => '(?:[a-z0-9][-a-z0-9]*\.)*(?:[a-z0-9][-a-z0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,6})'
 	);
 
 /**
@@ -97,11 +97,11 @@ class Validation extends Object {
  * @access public
  * @static
  */
-	function &getInstance() {
+    static function &getInstance() {
 		static $instance = array();
 
 		if (!$instance) {
-			$instance[0] =& new Validation();
+			$instance[0] = new Validation();
 		}
 		return $instance[0];
 	}
@@ -536,7 +536,8 @@ class Validation extends Object {
 		if (is_array($check)) {
 			return Validation::extension(array_shift($check), $extensions);
 		}
-		$extension = strtolower(array_pop(explode('.', $check)));
+		$array = explode('.', $check);
+		$extension = strtolower(array_pop($array));
 		foreach ($extensions as $value) {
 			if ($extension == strtolower($value)) {
 				return true;

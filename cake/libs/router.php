@@ -156,7 +156,7 @@ class Router {
  *
  * @return void
  */
-	function Router() {
+	function __construct() {
 		$this->__setPrefixes();
 	}
 
@@ -185,11 +185,11 @@ class Router {
  * @access public
  * @static
  */
-	function &getInstance() {
+	static function &getInstance() {
 		static $instance = array();
 
 		if (!$instance) {
-			$instance[0] =& new Router();
+			$instance[0] = new Router();
 		}
 		return $instance[0];
 	}
@@ -202,7 +202,7 @@ class Router {
  * @see Router::$__named
  * @static
  */
-	function getNamedExpressions() {
+	static function getNamedExpressions() {
 		$self =& Router::getInstance();
 		return $self->__named;
 	}
@@ -260,7 +260,7 @@ class Router {
  * @access public
  * @static
  */
-	function connect($route, $defaults = array(), $options = array()) {
+	static function connect($route, $defaults = array(), $options = array()) {
 		$self =& Router::getInstance();
 
 		foreach ($self->__prefixes as $prefix) {
@@ -283,7 +283,7 @@ class Router {
 			unset($options['routeClass']);
 		}
 		//TODO 2.0 refactor this to use a string class name, throw exception, and then construct.
-		$Route =& new $routeClass($route, $defaults, $options);
+		$Route = new $routeClass($route, $defaults, $options);
 		if ($routeClass !== 'CakeRoute' && !is_subclass_of($Route, 'CakeRoute')) {
 			trigger_error(__('Route classes must extend CakeRoute', true), E_USER_WARNING);
 			return false;
@@ -401,7 +401,7 @@ class Router {
  * @access public
  * @static
  */
-	function mapResources($controller, $options = array()) {
+    static function mapResources($controller, $options = array()) {
 		$self =& Router::getInstance();
 		$options = array_merge(array('prefix' => '/', 'id' => $self->__named['ID'] . '|' . $self->__named['UUID']), $options);
 		$prefix = $options['prefix'];
@@ -429,7 +429,7 @@ class Router {
  * @access public
  * @static
  */
-	function prefixes() {
+	static function prefixes() {
 		$self =& Router::getInstance();
 		return $self->__prefixes;
 	}
@@ -443,7 +443,7 @@ class Router {
  * @access public
  * @static
  */
-	function parse($url) {
+	static function parse($url) {
 		$self =& Router::getInstance();
 		if (!$self->__defaultsMapped && $self->__connectDefaults) {
 			$self->__connectDefaultRoutes();
@@ -620,7 +620,7 @@ class Router {
  * @access public
  * @static
  */
-	function setRequestInfo($params) {
+	static function setRequestInfo($params) {
 		$self =& Router::getInstance();
 		$defaults = array('plugin' => null, 'controller' => null, 'action' => null);
 		$params[0] = array_merge($defaults, (array)$params[0]);
@@ -644,7 +644,7 @@ class Router {
  * @access public
  * @static
  */
-	function getParams($current = false) {
+	static function getParams($current = false) {
 		$self =& Router::getInstance();
 		if ($current) {
 			return $self->__params[count($self->__params) - 1];
@@ -664,7 +664,7 @@ class Router {
  * @access public
  * @static
  */
-	function getParam($name = 'controller', $current = false) {
+	static function getParam($name = 'controller', $current = false) {
 		$params = Router::getParams($current);
 		if (isset($params[$name])) {
 			return $params[$name];
@@ -680,7 +680,7 @@ class Router {
  * @access public
  * @static
  */
-	function getPaths($current = false) {
+    static function getPaths($current = false) {
 		$self =& Router::getInstance();
 		if ($current) {
 			return $self->__paths[count($self->__paths) - 1];
@@ -761,7 +761,7 @@ class Router {
  * @access public
  * @static
  */
-	function url($url = null, $full = false) {
+	static function url($url = null, $full = false) {
 		$self =& Router::getInstance();
 		$defaults = $params = array('plugin' => null, 'controller' => null, 'action' => 'index');
 
@@ -772,7 +772,7 @@ class Router {
 		}
 
 		if (!empty($self->__params)) {
-			if (isset($this) && !isset($this->params['requested'])) {
+			if (isset($self) && !isset($self->params['requested'])) {
 				$params = $self->__params[0];
 			} else {
 				$params = end($self->__params);
@@ -781,7 +781,7 @@ class Router {
 		$path = array('base' => null);
 
 		if (!empty($self->__paths)) {
-			if (isset($this) && !isset($this->params['requested'])) {
+			if (isset($self) && !isset($self->params['requested'])) {
 				$path = $self->__paths[0];
 			} else {
 				$path = end($self->__paths);
@@ -971,7 +971,7 @@ class Router {
  * @access public
  * @static
  */
-	function getNamedElements($params, $controller = null, $action = null) {
+    static function getNamedElements($params, $controller = null, $action = null) {
 		$self =& Router::getInstance();
 		$named = array();
 
@@ -999,7 +999,7 @@ class Router {
  * @access public
  * @static
  */
-	function matchNamed($param, $val, $rule, $context = array()) {
+	static function matchNamed($param, $val, $rule, $context = array()) {
 		if ($rule === true || $rule === false) {
 			return $rule;
 		}
@@ -1067,7 +1067,7 @@ class Router {
  * @access public
  * @static
  */
-	function reverse($params) {
+	static function reverse($params) {
 		$pass = $params['pass'];
 		$named = $params['named'];
 		if (isset($params['url'])) {
@@ -1096,7 +1096,7 @@ class Router {
  * @access public
  * @static
  */
-	function normalize($url = '/') {
+    static function normalize($url = '/') {
 		if (is_array($url)) {
 			$url = Router::url($url);
 		} elseif (preg_match('/^[a-z\-]+:\/\//', $url)) {
@@ -1139,7 +1139,7 @@ class Router {
  * @access public
  * @static
  */
-	function &currentRoute() {
+    static function &currentRoute() {
 		$self =& Router::getInstance();
 		return $self->__currentRoute[count($self->__currentRoute) - 1];
 	}
@@ -1183,7 +1183,7 @@ class Router {
  * @return void
  * @static
  */
-	function parseExtensions() {
+	static function parseExtensions() {
 		$self =& Router::getInstance();
 		$self->__parseExtensions = true;
 		if (func_num_args() > 0) {
@@ -1329,7 +1329,7 @@ class CakeRoute {
  * @return void
  * @access public
  */
-	function CakeRoute($template, $defaults = array(), $options = array()) {
+	function __construct($template, $defaults = array(), $options = array()) {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
 		$this->options = (array)$options;
@@ -1424,7 +1424,7 @@ class CakeRoute {
 			return false;
 		} else {
 			foreach ($this->defaults as $key => $val) {
-				if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
+				if (isset($key[0]) && $key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
 					if (isset($this->__headerMap[$header[1]])) {
 						$header = $this->__headerMap[$header[1]];
 					} else {

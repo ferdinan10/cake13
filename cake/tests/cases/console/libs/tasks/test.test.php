@@ -261,13 +261,13 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function startTest() {
-		$this->Dispatcher =& new TestTestTaskMockShellDispatcher();
+	function startTest($method) {
+		$this->Dispatcher = new TestTestTaskMockShellDispatcher();
 		$this->Dispatcher->shellPaths = App::path('shells');
-		$this->Task =& new MockTestTask($this->Dispatcher);
+		$this->Task = new MockTestTask($this->Dispatcher);
 		$this->Task->name = 'TestTask';
 		$this->Task->Dispatch =& $this->Dispatcher;
-		$this->Task->Template =& new TemplateTask($this->Dispatcher);
+		$this->Task->Template = new TemplateTask($this->Dispatcher);
 	}
 
 /**
@@ -276,7 +276,7 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function endTest() {
+	function endTest($method) {
 		ClassRegistry::flush();
 		App::build();
 	}
@@ -573,11 +573,11 @@ class TestTaskTest extends CakeTestCase {
 		), true);
 
 		$this->Task->plugin = 'TestPlugin';
-		$path = $testApp . 'test_plugin' . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'other_helper.test.php';
+		$path = $testApp . 'test_plugin' . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'plugged_helper.test.php';
 		$this->Task->setReturnValueAt(0, 'in', 5); //helper
 		$this->Task->setReturnValueAt(1, 'in', 1); //OtherHelper
 		$this->Task->expectAt(0, 'createFile', array($path, '*'));
-		$this->Task->expectAt(9, 'out', array('1. OtherHelper'));
+		$this->Task->expectAt(9, 'out', array('1. PluggedHelper'));
 		$this->Task->execute();
 	}
 

@@ -129,7 +129,7 @@ class ShellDispatcher {
  * @return void
  * @access public
  */
-	function ShellDispatcher($args = array()) {
+	function __construct($args = array()) {
 		set_time_limit(0);
 
 		$this->__initConstants();
@@ -250,12 +250,12 @@ class ShellDispatcher {
 
 		$includes = array(
 			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
-			CORE_PATH . 'cake' . DS . 'libs' . DS . 'object.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'cake_object.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'configure.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'file.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'cache.php',
-			CORE_PATH . 'cake' . DS . 'libs' . DS . 'string.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'cake_string.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'class_registry.php',
 			CORE_PATH . 'cake' . DS . 'console' . DS . 'error.php'
 		);
@@ -364,7 +364,7 @@ class ShellDispatcher {
 		}
 		$methods = array_diff(get_class_methods($Shell), $methods);
 		$added = in_array(strtolower($arg), array_map('strtolower', $methods));
-		$private = $arg[0] == '_' && method_exists($Shell, $arg);
+		$private = isset($arg[0]) && $arg[0] == '_' && method_exists($Shell, $arg);
 
 		if (!$private) {
 			if ($added) {
@@ -503,7 +503,7 @@ class ShellDispatcher {
 		if (isset($params['working'])) {
 			$params['working'] = trim($params['working']);
 		}
-		if (!empty($params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
+		if (!empty($params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0][0] !== '.')) {
 			if (empty($this->params['app']) && $params['working'] != $params['root']) {
 				$params['root'] = dirname($params['working']);
 				$params['app'] = basename($params['working']);
@@ -541,12 +541,12 @@ class ShellDispatcher {
 		$count = count($params);
 		for ($i = 0; $i < $count; $i++) {
 			if (isset($params[$i])) {
-				if ($params[$i]{0} === '-') {
+				if ($params[$i][0] === '-') {
 					$key = substr($params[$i], 1);
 					$this->params[$key] = true;
 					unset($params[$i]);
 					if (isset($params[++$i])) {
-						if ($params[$i]{0} !== '-') {
+						if ($params[$i][0] !== '-') {
 							$this->params[$key] = str_replace('"', '', $params[$i]);
 							unset($params[$i]);
 						} else {
@@ -622,7 +622,7 @@ class ShellDispatcher {
 		if ($shellList) {
 			ksort($shellList);
 			if (DS === '/') {
-				$width = exec('tput cols') - 2;
+				$width = ((int) exec('tput cols')) - 2;
 			}
 			if (empty($width)) {
 				$width = 80;

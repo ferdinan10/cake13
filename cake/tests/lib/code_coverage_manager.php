@@ -81,7 +81,7 @@ class CodeCoverageManager {
 	function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
-			$instance[0] =& new CodeCoverageManager();
+			$instance[0] = new CodeCoverageManager();
 		}
 		return $instance[0];
 	}
@@ -259,7 +259,10 @@ class CodeCoverageManager {
  */
 	function reportCaseHtmlDiff($testObjectFile, $coverageData, $execCodeLines, $numContextLines) {
 		$manager = CodeCoverageManager::getInstance();
-		$total = count($testObjectFile);
+		$total = 0;
+		if (is_countable($testObjectFile)) {
+            $total = count($testObjectFile);
+        }
 		$lines = array();
 
 		for ($i = 1; $i < $total + 1; $i++) {
@@ -346,23 +349,25 @@ class CodeCoverageManager {
 		// get the output
 		$lineCount = $coveredCount = 0;
 		$report = '';
-		foreach ($testObjectFile as $num => $line) {
-			// start line count at 1
-			$num++;
-			$class = $lines[$num];
+		if (is_countable($testObjectFile)) {
+            foreach ($testObjectFile as $num => $line) {
+                // start line count at 1
+                $num++;
+                $class = $lines[$num];
 
-			if (strpos($class, 'ignored') === false) {
-				$lineCount++;
+                if (strpos($class, 'ignored') === false) {
+                    $lineCount++;
 
-				if (strpos($class, 'covered') !== false && strpos($class, 'uncovered') === false) {
-					$coveredCount++;
-				}
-			}
+                    if (strpos($class, 'covered') !== false && strpos($class, 'uncovered') === false) {
+                        $coveredCount++;
+                    }
+                }
 
-			if (strpos($class, 'show') !== false) {
-				$report .= $manager->__paintCodeline($class, $num, $line);
-			}
-		}
+                if (strpos($class, 'show') !== false) {
+                    $report .= $manager->__paintCodeline($class, $num, $line);
+                }
+            }
+        }
 		return $manager->__paintHeader($lineCount, $coveredCount, $report);
 	}
 
@@ -498,10 +503,10 @@ class CodeCoverageManager {
 				break;
 			}
 		}
-		$testManager =& new TestManager();
+		$testManager = new TestManager();
 		$testFile = str_replace(array('/', $testManager->_testExtension), array(DS, '.php'), $file);
 
-		$folder =& new Folder();
+		$folder = new Folder();
 		$folder->cd(ROOT . DS . CAKE_TESTS_LIB);
 		$contents = $folder->read();
 
@@ -528,7 +533,7 @@ class CodeCoverageManager {
  */
 	function __testObjectFilesFromGroupFile($groupFile, $isApp = true) {
 		$manager = CodeCoverageManager::getInstance();
-		$testManager =& new TestManager();
+		$testManager = new TestManager();
 
 		$path = TESTS;
 		if (!$isApp) {

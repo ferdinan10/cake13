@@ -62,10 +62,10 @@ class CakeLog {
  * @return void
  * @static
  */
-	function &getInstance() {
+	static function &getInstance() {
 		static $instance = array();
 		if (!isset($instance[0])) {
-			$instance[0] =& new CakeLog();
+			$instance[0] = new CakeLog();
 		}
 		return $instance[0];
 	}
@@ -96,7 +96,7 @@ class CakeLog {
  * @return boolean success of configuration.
  * @static
  */
-	function config($key, $config) {
+	static function config($key, $config) {
 		if (empty($config['engine'])) {
 			trigger_error(__('Missing logger classname', true), E_USER_WARNING);
 			return false;
@@ -150,7 +150,7 @@ class CakeLog {
  * @access public
  * @static
  */
-	function configured() {
+	static function configured() {
 		$self =& CakeLog::getInstance();
 		return array_keys($self->_streams);
 	}
@@ -164,7 +164,7 @@ class CakeLog {
  * @access public
  * @static
  */
-	function drop($streamName) {
+	static function drop($streamName) {
 		$self =& CakeLog::getInstance();
 		unset($self->_streams[$streamName]);
 	}
@@ -179,7 +179,7 @@ class CakeLog {
 		if (!class_exists('FileLog')) {
 			App::import('Core', 'log/FileLog');
 		}
-		$this->_streams['default'] =& new FileLog(array('path' => LOGS));
+		$this->_streams['default'] = new FileLog(array('path' => LOGS));
 	}
 
 /**
@@ -208,7 +208,7 @@ class CakeLog {
  * @access public
  * @static
  */
-	function write($type, $message) {
+	static function write($type, $message) {
 		if (!defined('LOG_ERROR')) {
 			define('LOG_ERROR', 2);
 		}
